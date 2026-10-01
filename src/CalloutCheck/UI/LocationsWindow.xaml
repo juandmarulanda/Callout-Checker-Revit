@@ -1,0 +1,47 @@
+<Window x:Class="CalloutCheck.UI.LocationsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Where is it called out?"
+        Width="540" Height="330" MinWidth="380" MinHeight="200"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        FontFamily="Segoe UI" FontSize="12.5" Background="White">
+    <Window.Resources>
+        <ResourceDictionary Source="pack://application:,,,/CalloutCheck;component/UI/Styles.xaml"/>
+    </Window.Resources>
+    <DockPanel Margin="12">
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+            <TextBlock Text="{Binding ViewName}" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}"
+                       TextTrimming="CharacterEllipsis"/>
+            <TextBlock Text="{Binding Summary}" Foreground="{StaticResource MutedBrush}"/>
+        </StackPanel>
+        <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Content="Close" IsCancel="True" Margin="0,8,0,0"
+                Click="OnClose"/>
+        <ListBox ItemsSource="{Binding Rows}" Style="{StaticResource CardList}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Margin="0,4">
+                        <Button DockPanel.Dock="Right" Content="Show" Style="{StaticResource SmallButton}" VerticalAlignment="Center"
+                                ToolTip="Open the view and zoom to this callout"
+                                Command="{Binding DataContext.ShowCalloutCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"/>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Sheets}" FontWeight="SemiBold" TextWrapping="Wrap">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding OnSheet}" Value="False">
+                                                <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+                                                <Setter Property="FontStyle" Value="Italic"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="{Binding HostView}" Foreground="{StaticResource MutedBrush}" FontSize="11.5"/>
+                        </StackPanel>
+                    </DockPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</Window>

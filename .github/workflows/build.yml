@@ -1,0 +1,62 @@
+name: build
+
+on:
+  push:
+    branches-ignore: [installer]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        revit: ["2025", "2026", "2027"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: Build
+        run: dotnet build src/CalloutCheck/CalloutCheck.csproj -c Release -p:RevitVersion=${{ matrix.revit }}
+      - name: Package
+        shell: pwsh
+        run: |
+          $out = "package/${{ matrix.revit }}"
+          New-Item -ItemType Directory -Force -Path "$out/CalloutCheck" | Out-Null
+          Copy-Item "bin/Release/${{ matrix.revit }}/CalloutCheck.dll" "$out/CalloutCheck/"
+          Copy-Item "CalloutCheck.addin" "$out/"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CalloutCheck-Revit${{ matrix.revit }}
+          path: package/${{ matrix.revit }}
+
+  bundle:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Make installer zip
+        run: |
+          mkdir -p pkg/CalloutCheck
+          for v in 2025 2026 2027; do cp -r artifacts/CalloutCheck-Revit$v pkg/CalloutCheck/$v; done
+          cp dist/Install.* dist/Uninstall.* pkg/CalloutCheck/
+          (cd pkg && zip -r ../CalloutCheck-Installer.zip CalloutCheck)
+      - name: Publish to the installer branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan installer
+          git rm -rf --quiet .
+          git add CalloutCheck-Installer.zip
+          git commit -m "CalloutCheck installer from ${GITHUB_SHA}"
+          git push -f origin installer
