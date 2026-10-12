@@ -24,6 +24,7 @@ Author: **Juan Marulanda**
 
 ### Door Tags (third tab, new in 1.1)
 - Groups every door by **family + type + instance dimensions** (the instance parameters in the *Dimensions* group, e.g. *Unit Width Options*, *Width*, *Height*, *Rough Width*...). Doors in the same group are the same door and should share one tag.
+- Only real doors are tagged: families whose name starts with `05` or `06`, or contains `garage`. Trim, hardware sets and other families in the Doors category are skipped (both rules are editable in the tab).
 - Choose the tag parameter (default `LCH_Txt_Mark1`; any instance text parameter such as `Mark` works).
 - Each group shows its dimensions, how many doors it has and the tags they currently carry. Groups needing attention are flagged: **Mixed tags**, **No tag**, **Some untagged**, or **Tag reused** (the same tag is used by a different door).
 - **Select** selects all doors of the group in Revit so you can edit the tag once in Properties; or type the tag and click **Set tag** to write it on all of them.

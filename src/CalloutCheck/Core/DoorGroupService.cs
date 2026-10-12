@@ -28,6 +28,23 @@ namespace CalloutCheck.Core
     {
         public const string DefaultTagParameter = "LCH_Txt_Mark1";
 
+        /// <summary>Door families start with a 05/06 code; garage doors are recognised by name.
+        /// Everything else in the Doors category (trim, hardware sets...) carries no tag.</summary>
+        public const string DefaultStartsWith = "05; 06";
+        public const string DefaultContains = "garage";
+
+        public static bool IsTaggableDoor(FamilyInstance door, string startsWith, string contains)
+        {
+            string family = door.Symbol?.FamilyName?.Trim() ?? string.Empty;
+            return SplitKeys(startsWith).Any(k => family.StartsWith(k, StringComparison.OrdinalIgnoreCase))
+                || SplitKeys(contains).Any(k => family.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
+        private static IEnumerable<string> SplitKeys(string text) =>
+            (text ?? string.Empty).Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(k => k.Trim())
+                .Where(k => k.Length > 0);
+
         public static List<FamilyInstance> CollectDoors(Document doc, View scopeView)
         {
             var collector = scopeView != null

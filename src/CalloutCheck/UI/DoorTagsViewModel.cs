@@ -81,12 +81,16 @@ namespace CalloutCheck.UI
     {
         private const string TagParamFile = "door-tag-parameter.txt";
         private const string CompareFile = "door-compare-parameters.txt";
+        private const string StartsWithFile = "door-family-starts-with.txt";
+        private const string ContainsFile = "door-family-contains.txt";
 
         private readonly MainViewModel _main;
         private Document _doc;
         private List<DoorGroupRow> _all = new List<DoorGroupRow>();
         private string _tagParameter = AppSettings.Load(TagParamFile, DoorGroupService.DefaultTagParameter);
         private bool _activeViewOnly;
+        private string _startsWith = AppSettings.Load(StartsWithFile, DoorGroupService.DefaultStartsWith);
+        private string _contains = AppSettings.Load(ContainsFile, DoorGroupService.DefaultContains);
         private bool _onlyProblems;
         private string _search = string.Empty;
         private string _summary = "Click 'Analyze doors' to group identical doors.";
@@ -107,6 +111,8 @@ namespace CalloutCheck.UI
 
         public string TagParameter { get => _tagParameter; set => Set(ref _tagParameter, value); }
         public bool ActiveViewOnly { get => _activeViewOnly; set => Set(ref _activeViewOnly, value); }
+        public string FamilyStartsWith { get => _startsWith; set => Set(ref _startsWith, value); }
+        public string FamilyContains { get => _contains; set => Set(ref _contains, value); }
         public bool ParamsExpanded { get => _paramsExpanded; set => Set(ref _paramsExpanded, value); }
         public string Summary { get => _summary; set => Set(ref _summary, value); }
 
@@ -139,6 +145,10 @@ namespace CalloutCheck.UI
                 return;
             }
             AppSettings.Save(TagParamFile, tagParam);
+            AppSettings.Save(StartsWithFile, FamilyStartsWith);
+            AppSettings.Save(ContainsFile, FamilyContains);
+            string startsWith = FamilyStartsWith;
+            string contains = FamilyContains;
             _main.Status = "Reading doors...";
 
             App.Tasks.Run(app =>
@@ -151,7 +161,9 @@ namespace CalloutCheck.UI
                     return;
                 }
 
-                List<FamilyInstance> doors = DoorGroupService.CollectDoors(doc, ActiveViewOnly ? uidoc.ActiveView : null);
+                List<FamilyInstance> all = DoorGroupService.CollectDoors(doc, ActiveViewOnly ? uidoc.ActiveView : null);
+                List<FamilyInstance> doors = all.Where(d => DoorGroupService.IsTaggableDoor(d, startsWith, contains)).ToList();
+                int skipped = all.Count - doors.Count;
 
                 if (reloadParameters || CompareParameters.Count == 0 || !MainViewModel.IsSame(doc, _doc))
                     LoadParameterLists(doors);
@@ -176,7 +188,7 @@ namespace CalloutCheck.UI
                 ApplyFilter();
 
                 int problems = _all.Count(r => r.Problem);
-                Summary = $"{doors.Count} doors in {_all.Count} groups  ·  {problems} group(s) need attention";
+                Summary = $"{doors.Count} doors in {_all.Count} groups  ·  {problems} group(s) need attention  ·  {skipped} trim/hardware/other elements skipped";
                 _main.Status = $"Doors analyzed at {DateTime.Now:t}.";
             });
         }

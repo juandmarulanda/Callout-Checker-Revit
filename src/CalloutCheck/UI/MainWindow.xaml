@@ -251,6 +251,17 @@
                                   ToolTip="Instance text parameter that holds the door tag (e.g. LCH_Txt_Mark1 or Mark)"/>
                     </DockPanel>
 
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                        <TextBlock Text="Door families start with:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBox Text="{Binding FamilyStartsWith, UpdateSourceTrigger=PropertyChanged}" Width="90" VerticalContentAlignment="Center"
+                                 ToolTip="Family name prefixes, separated by ';'"/>
+                        <TextBlock Text="or contain:" VerticalAlignment="Center" Margin="10,0,6,0"/>
+                        <TextBox Text="{Binding FamilyContains, UpdateSourceTrigger=PropertyChanged}" Width="90" VerticalContentAlignment="Center"
+                                 ToolTip="Words in the family name, separated by ';'"/>
+                        <TextBlock Text="Other Doors-category families (trim, hardware...) are skipped." Foreground="{StaticResource MutedBrush}"
+                                   VerticalAlignment="Center" Margin="10,0,0,0" TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
+
                     <Expander DockPanel.Dock="Top" IsExpanded="{Binding ParamsExpanded}" Margin="0,0,0,8">
                         <Expander.Header>
                             <TextBlock Text="{Binding ParamsHeader}" FontWeight="SemiBold"/>
