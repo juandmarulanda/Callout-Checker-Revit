@@ -117,8 +117,16 @@ namespace CalloutCheck.Core
 
         private static Regex ToRegex(string pattern)
         {
-            string body = Regex.Escape(pattern).Replace(@"\*", ".*").Replace("#", @"\d");
-            return new Regex("^" + body + "$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            // Built char by char: Regex.Escape also escapes '#', so a plain Replace would miss it.
+            var body = new System.Text.StringBuilder("^");
+            foreach (char c in pattern)
+            {
+                if (c == '*') body.Append(".*");
+                else if (c == '#') body.Append(@"\d");
+                else body.Append(Regex.Escape(c.ToString()));
+            }
+            body.Append('$');
+            return new Regex(body.ToString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         }
 
         private static IEnumerable<string> SplitKeys(string text) =>
