@@ -29,7 +29,7 @@ namespace CalloutCheck
                 typeof(ShowWindowCommand).FullName)
             {
                 ToolTip = "Find drafting views on detail sheets that have not been called out yet, " +
-                          "and renumber the viewports on a sheet in pick order.",
+                          "renumber the viewports on a sheet in pick order, and give identical doors the same tag.",
                 LargeImage = LoadIcon(32),
                 Image = LoadIcon(16),
             };

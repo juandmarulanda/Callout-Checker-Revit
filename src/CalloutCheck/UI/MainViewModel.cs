@@ -29,6 +29,7 @@ namespace CalloutCheck.UI
 
         public MainViewModel()
         {
+            Doors = new DoorTagsViewModel(this);
             RefreshCommand = new RelayCommand(_ => Refresh());
             ApplySheetFilterCommand = new RelayCommand(_ => { ApplySheetFilter(); Refresh(keepSheetSelection: true); });
             CheckAllSheetsCommand = new RelayCommand(_ => { foreach (var s in Sheets) s.IsChecked = true; });
@@ -50,6 +51,7 @@ namespace CalloutCheck.UI
 
         public string DocumentTitle { get => _documentTitle; set => Set(ref _documentTitle, value); }
         public string Status { get => _status; set => Set(ref _status, value); }
+        public DoorTagsViewModel Doors { get; }
         public string AuthorLine => $"CalloutCheck v{typeof(MainViewModel).Assembly.GetName().Version.ToString(3)}  ·  Author: Juan Marulanda";
 
         // ---------------------------------------------------------------- callout audit
@@ -383,7 +385,7 @@ namespace CalloutCheck.UI
             return false;
         }
 
-        private static bool IsSame(Document a, Document b)
+        internal static bool IsSame(Document a, Document b)
         {
             if (a == null || b == null || !a.IsValidObject || !b.IsValidObject) return false;
             return a.Equals(b) || (a.Title == b.Title && a.PathName == b.PathName);

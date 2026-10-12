@@ -234,6 +234,134 @@
                     </ListView>
                 </DockPanel>
             </TabItem>
+            <!-- ============================== Tab 3: door tags -->
+            <TabItem Header="  Door Tags  " DataContext="{Binding Doors}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,8"
+                               Text="Doors with the same family, type and dimensions are grouped together and should share one tag. Use 'Select' to select every door of a group in Revit and edit the tag once in Properties, or type it here and click 'Set tag'."/>
+
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                        <Button DockPanel.Dock="Right" Content="Analyze doors" Style="{StaticResource PrimaryButton}" Command="{Binding AnalyzeCommand}"
+                                ToolTip="Read the doors and group them"/>
+                        <CheckBox DockPanel.Dock="Right" IsChecked="{Binding ActiveViewOnly}" VerticalAlignment="Center" Margin="12,0,8,0"
+                                  Content="Only doors in the active view"/>
+                        <TextBlock Text="Tag parameter:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox IsEditable="True" ItemsSource="{Binding TagParameters}" Width="220" HorizontalAlignment="Left"
+                                  Text="{Binding TagParameter, UpdateSourceTrigger=PropertyChanged}"
+                                  ToolTip="Instance text parameter that holds the door tag (e.g. LCH_Txt_Mark1 or Mark)"/>
+                    </DockPanel>
+
+                    <Expander DockPanel.Dock="Top" IsExpanded="{Binding ParamsExpanded}" Margin="0,0,0,8">
+                        <Expander.Header>
+                            <TextBlock Text="{Binding ParamsHeader}" FontWeight="SemiBold"/>
+                        </Expander.Header>
+                        <DockPanel Margin="18,6,0,0">
+                            <DockPanel DockPanel.Dock="Bottom" Margin="0,4,0,0">
+                                <Button DockPanel.Dock="Right" Content="Regroup" Command="{Binding ReanalyzeCommand}"
+                                        ToolTip="Group again using the checked parameters"/>
+                                <TextBlock Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"
+                                           Text="Instance parameters from the Dimensions group. Uncheck any that should not split doors into different tags."/>
+                            </DockPanel>
+                            <ListBox ItemsSource="{Binding CompareParameters}" MaxHeight="150" BorderBrush="{StaticResource BorderBrush}">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Vertical" MaxHeight="140"/>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,1,14,1">
+                                            <TextBlock>
+                                                <Run Text="{Binding Name, Mode=OneWay}"/>
+                                                <Run Text="{Binding Kind, Mode=OneWay}" Foreground="{StaticResource MutedBrush}" FontSize="10.5"/>
+                                            </TextBlock>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DockPanel>
+                    </Expander>
+
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                        <CheckBox DockPanel.Dock="Right" IsChecked="{Binding OnlyProblems}" VerticalAlignment="Center" Margin="12,0,0,0"
+                                  Content="Only groups that need attention"/>
+                        <TextBlock Text="Search:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Height="24"/>
+                    </DockPanel>
+
+                    <TextBlock DockPanel.Dock="Bottom" Text="{Binding Summary}" Foreground="{StaticResource MutedBrush}" Margin="2,6,0,0"/>
+
+                    <ListBox ItemsSource="{Binding Groups}" Style="{StaticResource CardList}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel Margin="0,5">
+                                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
+                                        <Button Content="Select" Style="{StaticResource PrimaryButton}" Padding="10,2" MinWidth="0"
+                                                ToolTip="Select all the doors of this group in Revit"
+                                                Command="{Binding DataContext.SelectGroupCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                CommandParameter="{Binding}"/>
+                                        <TextBox Text="{Binding NewTag, UpdateSourceTrigger=PropertyChanged}" Width="60" Margin="10,0,0,0"
+                                                 VerticalContentAlignment="Center" ToolTip="New tag for every door in this group"/>
+                                        <Button Content="Set tag" Style="{StaticResource SmallButton}"
+                                                ToolTip="Write this tag on every door of the group"
+                                                Command="{Binding DataContext.SetTagCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                    <Border DockPanel.Dock="Left" CornerRadius="9" Padding="7,1" Margin="0,0,10,0" MinWidth="92"
+                                            VerticalAlignment="Top">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{StaticResource OkLightBrush}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Problem}" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource MissingLightBrush}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding Status}" HorizontalAlignment="Center" FontSize="11" FontWeight="SemiBold">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="{StaticResource OkBrush}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Problem}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource MissingBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                    <StackPanel>
+                                        <TextBlock TextTrimming="CharacterEllipsis">
+                                            <Run Text="{Binding Title, Mode=OneWay}" FontWeight="SemiBold"/>
+                                            <Run Text="   "/>
+                                            <Run Text="{Binding CountText, Mode=OneWay}" Foreground="{StaticResource AccentBrush}"/>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding DimensionsText}" Foreground="{StaticResource MutedBrush}" FontSize="11.5"
+                                                   TextWrapping="Wrap"/>
+                                        <TextBlock FontSize="11.5">
+                                            <Run Text="Tags: " Foreground="{StaticResource MutedBrush}"/>
+                                            <Run Text="{Binding TagsText, Mode=OneWay}" FontWeight="SemiBold"/>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding ConflictText}" Foreground="{StaticResource MissingBrush}" FontSize="11.5">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HasConflict}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </TabItem>
         </TabControl>
     </DockPanel>
 </Window>
