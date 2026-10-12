@@ -16,7 +16,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>CalloutCheck</RootNamespace>
     <AssemblyName>CalloutCheck</AssemblyName>
-    <Version>1.1.2</Version>
+    <Version>1.2.0</Version>
     <Authors>Juan Marulanda</Authors>
     <Product>CalloutCheck</Product>
     <DefineConstants>$(DefineConstants);REVIT$(RevitVersion)</DefineConstants>

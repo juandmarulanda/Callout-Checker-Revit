@@ -29,7 +29,8 @@ namespace CalloutCheck.UI
 
         public MainViewModel()
         {
-            Doors = new DoorTagsViewModel(this);
+            Doors = new TagGroupsViewModel(this, TagProfile.Doors);
+            Windows = new TagGroupsViewModel(this, TagProfile.Windows);
             RefreshCommand = new RelayCommand(_ => Refresh());
             ApplySheetFilterCommand = new RelayCommand(_ => { ApplySheetFilter(); Refresh(keepSheetSelection: true); });
             CheckAllSheetsCommand = new RelayCommand(_ => { foreach (var s in Sheets) s.IsChecked = true; });
@@ -51,7 +52,8 @@ namespace CalloutCheck.UI
 
         public string DocumentTitle { get => _documentTitle; set => Set(ref _documentTitle, value); }
         public string Status { get => _status; set => Set(ref _status, value); }
-        public DoorTagsViewModel Doors { get; }
+        public TagGroupsViewModel Doors { get; }
+        public TagGroupsViewModel Windows { get; }
         public string AuthorLine => $"CalloutCheck v{typeof(MainViewModel).Assembly.GetName().Version.ToString(3)}  ·  Author: Juan Marulanda";
 
         // ---------------------------------------------------------------- callout audit

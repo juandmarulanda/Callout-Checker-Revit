@@ -22,13 +22,20 @@ Author: **Juan Marulanda**
 - Fine-tune with the ▲ ▼ arrows, choose the start number, and exclude views that should keep their number.
 - Applied in one transaction (one Undo) and via temporary numbers, so swapping numbers never collides.
 
-### Door Tags (third tab, new in 1.1)
-- Groups every door by **family + type + instance dimensions** (the instance parameters in the *Dimensions* group, e.g. *Unit Width Options*, *Width*, *Height*, *Rough Width*...). Doors in the same group are the same door and should share one tag.
-- Only real doors are tagged: families whose name starts with `05` or `06`, or contains `garage`. Trim, hardware sets and other families in the Doors category are skipped (both rules are editable in the tab).
+### Door Tags and Window Tags (third and fourth tabs)
+Company standard: identical doors (or windows) share the same tag; different ones get different tags.
+
+- Groups elements by **family + type + the compared instance parameters**. Doors and windows in the same group are the same product and should share one tag.
+  - **Doors** compare size (Dimensions: *Unit Width/Height Options*, *Width*, *Height*, *Rough Width*...) and handing (Construction yes/no: *Hinge Left*, *Hinge Right*...). A door hinged on the other side gets a different tag.
+  - **Windows** compare size, construction options (*Trim S1/S2* and their types, *Is Cedar/Fir/Hemlock*, *Window Is Argon*, *Window Is Tempered*, *Window Is Wuic*...) and manufacturer / product line / model (the Identity Data checkboxes and the *Option Manufacturer*, *LCH_Data_...* values).
+  - Expand *Compare* to tick or untick parameters and click *Regroup*; *Defaults* goes back to the recommended set.
+- Only real doors/windows are included, using a name rule on `Family : Type` (`*` = any text, `#` = one digit):
+  - Doors: `05*; 06*; *garage*`
+  - Windows: `*(###)*` (a 3-digit code in parentheses, e.g. `5047 (930)`)
+  - Trim, hardware sets and other families in those categories are skipped. Both rules are editable and remembered.
 - Choose the tag parameter (default `LCH_Txt_Mark1`; any instance text parameter such as `Mark` works).
-- Each group shows its dimensions, how many doors it has and the tags they currently carry. Groups needing attention are flagged: **Mixed tags**, **No tag**, **Some untagged**, or **Tag reused** (the same tag is used by a different door).
-- **Select** selects all doors of the group in Revit so you can edit the tag once in Properties; or type the tag and click **Set tag** to write it on all of them.
-- Expand *Compare dimensions* to choose which parameters count (for example, untick one that shouldn't split doors into different tags) and click *Regroup*. Hinge side and other non-dimension parameters are not compared.
+- Each group shows its size/options, how many elements it has and the tags they carry. Groups needing attention are flagged: **Mixed tags**, **No tag**, **Some untagged**, or **Tag reused** (the same tag is used by a different group).
+- **Select** selects every element of the group in Revit so you can edit the tag once in Properties; or type the tag and click **Set tag** to write it on all of them.
 
 The window is modeless: keep it open while you place callouts and hit **Refresh**.
 
