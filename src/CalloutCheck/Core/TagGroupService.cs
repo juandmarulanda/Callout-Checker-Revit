@@ -53,7 +53,7 @@ namespace CalloutCheck.Core
             Noun = "window",
             NounPlural = "windows",
             Category = BuiltInCategory.OST_Windows,
-            DefaultNameRule = "*(###)*",
+            DefaultNameRule = "(###)",
             NameRuleHelp = "Windows carry a 3-digit code in parentheses, e.g. 5047 (930). Trim and other families are skipped.",
             // Size + construction options (trim, argon, tempered, WUIC...) + manufacturer / product line / model.
             CheckedByDefault = p =>
@@ -104,22 +104,36 @@ namespace CalloutCheck.Core
         }
 
         /// <summary>
-        /// Name rule: ';'-separated patterns matched against "Family : Type".
-        /// '*' = any text, '#' = one digit. Example: "05*; 06*; *garage*" or "*(###)*".
+        /// Name rule: ';'-separated patterns matched against "Family : Type", the family name and the type name.
+        /// '*' = any text, '#' = one digit. A pattern without '*' matches anywhere in the name
+        /// ("(950)" or "(###)" = contains). Examples: "05*; 06*; *garage*" or "(###)".
         /// </summary>
         public static bool MatchesNameRule(FamilyInstance element, string rule)
         {
             FamilySymbol symbol = element.Symbol;
             if (symbol == null) return false;
-            string name = $"{symbol.FamilyName?.Trim()} : {symbol.Name?.Trim()}";
-            return SplitKeys(rule).Any(pattern => ToRegex(pattern).IsMatch(name));
+            string family = Normalize(symbol.FamilyName);
+            string type = Normalize(symbol.Name);
+            string[] candidates = { $"{family} : {type}", family, type };
+            return SplitKeys(rule)
+                .Select(ToRegex)
+                .Any(rx => candidates.Any(rx.IsMatch));
         }
+
+        public static string DisplayName(FamilyInstance element) =>
+            element.Symbol == null ? "(no type)" : $"{Normalize(element.Symbol.FamilyName)} : {Normalize(element.Symbol.Name)}";
+
+        /// <summary>Trims and collapses whitespace (including non-breaking spaces).</summary>
+        private static string Normalize(string text) =>
+            Regex.Replace((text ?? string.Empty).Replace('\u00A0', ' '), @"\s+", " ").Trim();
 
         private static Regex ToRegex(string pattern)
         {
             // Built char by char: Regex.Escape also escapes '#', so a plain Replace would miss it.
+            string p = Normalize(pattern);
+            if (p.IndexOf('*') < 0) p = "*" + p + "*";   // no wildcard = "contains"
             var body = new System.Text.StringBuilder("^");
-            foreach (char c in pattern)
+            foreach (char c in p)
             {
                 if (c == '*') body.Append(".*");
                 else if (c == '#') body.Append(@"\d");

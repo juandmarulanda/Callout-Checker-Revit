@@ -31,7 +31,7 @@
                     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                         <TextBlock Text="Include family : type matching:" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBox Text="{Binding NameRule, UpdateSourceTrigger=PropertyChanged}" Width="160" VerticalContentAlignment="Center"
-                                 ToolTip="Patterns separated by ';'.  * = any text,  # = one digit.  Examples: 05*; 06*; *garage*   or   *(###)*"/>
+                                 ToolTip="Patterns separated by ';'.  * = any text,  # = one digit.  Without * the text can be anywhere in the name.  Examples: 05*; 06*; garage   or   (###)"/>
                         <TextBlock Text="{Binding NameRuleHelp}" Foreground="{StaticResource MutedBrush}"
                                    VerticalAlignment="Center" Margin="10,0,0,0" TextTrimming="CharacterEllipsis"/>
                     </DockPanel>
@@ -76,6 +76,14 @@
                         <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Height="24"/>
                     </DockPanel>
 
+                    <Expander DockPanel.Dock="Bottom" Margin="0,4,0,0">
+                        <Expander.Header>
+                            <TextBlock Text="{Binding SkippedHeader}" Foreground="{StaticResource MutedBrush}"/>
+                        </Expander.Header>
+                        <TextBox Text="{Binding SkippedText, Mode=OneWay}" IsReadOnly="True" MaxHeight="140" Margin="18,4,0,0"
+                                 VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" FontFamily="Consolas" FontSize="11.5"
+                                 ToolTip="Family : Type names that do not match the name rule. Adjust the rule if a real one is listed here."/>
+                    </Expander>
                     <TextBlock DockPanel.Dock="Bottom" Text="{Binding Summary}" Foreground="{StaticResource MutedBrush}" Margin="2,6,0,0"/>
 
                     <ListBox ItemsSource="{Binding Groups}" Style="{StaticResource CardList}">

@@ -29,10 +29,10 @@ Company standard: identical doors (or windows) share the same tag; different one
   - **Doors** compare size (Dimensions: *Unit Width/Height Options*, *Width*, *Height*, *Rough Width*...) and handing (Construction yes/no: *Hinge Left*, *Hinge Right*...). A door hinged on the other side gets a different tag.
   - **Windows** compare size, construction options (*Trim S1/S2* and their types, *Is Cedar/Fir/Hemlock*, *Window Is Argon*, *Window Is Tempered*, *Window Is Wuic*...) and manufacturer / product line / model (the Identity Data checkboxes and the *Option Manufacturer*, *LCH_Data_...* values).
   - Expand *Compare* to tick or untick parameters and click *Regroup*; *Defaults* goes back to the recommended set.
-- Only real doors/windows are included, using a name rule on `Family : Type` (`*` = any text, `#` = one digit):
+- Only real doors/windows are included, using a name rule matched against `Family : Type`, the family name and the type name (`*` = any text, `#` = one digit; a pattern without `*` can appear anywhere in the name):
   - Doors: `05*; 06*; *garage*`
-  - Windows: `*(###)*` (a 3-digit code in parentheses, e.g. `5047 (930)`)
-  - Trim, hardware sets and other families in those categories are skipped. Both rules are editable and remembered.
+  - Windows: `(###)` (a 3-digit code in parentheses, e.g. `5047 (930)`)
+  - Trim, hardware sets and other families in those categories are skipped. Both rules are editable and remembered; the *Skipped by the name rule* list at the bottom shows every Family : Type left out, so you can adjust the rule.
 - Choose the tag parameter (default `LCH_Txt_Mark1`; any instance text parameter such as `Mark` works).
 - Each group shows its size/options, how many elements it has and the tags they carry. Groups needing attention are flagged: **Mixed tags**, **No tag**, **Some untagged**, or **Tag reused** (the same tag is used by a different group).
 - **Select** selects every element of the group in Revit so you can edit the tag once in Properties; or type the tag and click **Set tag** to write it on all of them.

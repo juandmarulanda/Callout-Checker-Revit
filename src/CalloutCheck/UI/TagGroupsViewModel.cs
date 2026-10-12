@@ -109,13 +109,15 @@ namespace CalloutCheck.UI
         private string _search = string.Empty;
         private string _summary;
         private bool _paramsExpanded;
+        private string _skippedText = string.Empty;
+        private string _skippedHeader = "Skipped by the name rule: -";
 
         internal TagGroupsViewModel(MainViewModel main, TagProfile profile)
         {
             _main = main;
             _profile = profile;
             _tagParameter = AppSettings.Load(File("tag-parameter"), TagGroupService.DefaultTagParameter);
-            _nameRule = AppSettings.Load(File("name-rule"), profile.DefaultNameRule);
+            _nameRule = AppSettings.Load(File("name-rule3"), profile.DefaultNameRule);
             _summary = $"Click 'Analyze {profile.NounPlural}' to group identical {profile.NounPlural}.";
 
             AnalyzeCommand = new RelayCommand(_ => Analyze(reloadParameters: true));
@@ -145,6 +147,8 @@ namespace CalloutCheck.UI
         public bool ActiveViewOnly { get => _activeViewOnly; set => Set(ref _activeViewOnly, value); }
         public bool ParamsExpanded { get => _paramsExpanded; set => Set(ref _paramsExpanded, value); }
         public string Summary { get => _summary; set => Set(ref _summary, value); }
+        public string SkippedText { get => _skippedText; set => Set(ref _skippedText, value); }
+        public string SkippedHeader { get => _skippedHeader; set => Set(ref _skippedHeader, value); }
 
         public string ParamsHeader =>
             $"Compare: {CompareParameters.Count(p => p.IsChecked)} of {CompareParameters.Count} parameters (family and type are always compared)";
@@ -176,7 +180,7 @@ namespace CalloutCheck.UI
                 return;
             }
             AppSettings.Save(File("tag-parameter"), tagParam);
-            AppSettings.Save(File("name-rule"), NameRule);
+            AppSettings.Save(File("name-rule3"), NameRule);
             string rule = NameRule;
             _main.Status = $"Reading {_profile.NounPlural}...";
 
@@ -193,6 +197,13 @@ namespace CalloutCheck.UI
                 List<FamilyInstance> all = TagGroupService.Collect(doc, _profile.Category, ActiveViewOnly ? uidoc.ActiveView : null);
                 List<FamilyInstance> elements = all.Where(e => TagGroupService.MatchesNameRule(e, rule)).ToList();
                 int skipped = all.Count - elements.Count;
+                var kept = new HashSet<ElementId>(elements.Select(e => e.Id));
+                var skippedElements = all.Where(e => !kept.Contains(e.Id)).ToList();
+                SkippedText = string.Join(Environment.NewLine, skippedElements
+                    .GroupBy(TagGroupService.DisplayName)
+                    .OrderBy(g => g.Key, NaturalComparer.Instance)
+                    .Select(g => $"{g.Key}   ×{g.Count()}"));
+                SkippedHeader = $"Skipped by the name rule: {skipped} element(s) in {skippedElements.Select(TagGroupService.DisplayName).Distinct().Count()} family type(s)";
 
                 if (reloadParameters || CompareParameters.Count == 0 || !MainViewModel.IsSame(doc, _doc))
                     LoadParameterLists(elements, tagParam);
@@ -219,7 +230,7 @@ namespace CalloutCheck.UI
 
                 int problems = _all.Count(r => r.Problem);
                 Summary = $"{elements.Count} {_profile.NounPlural} in {_all.Count} groups  ·  {problems} group(s) need attention" +
-                          $"  ·  {skipped} other families skipped (name rule)";
+                          $"  ·  {skipped} other element(s) skipped by the name rule";
                 _main.Status = $"{_profile.Title}s analyzed at {DateTime.Now:t}.";
             });
         }
