@@ -1,0 +1,91 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="AccentBrush" Color="#1F4E79"/>
+    <SolidColorBrush x:Key="AccentLightBrush" Color="#E7EEF6"/>
+    <SolidColorBrush x:Key="CoffeeBrush" Color="#6F4E37"/>
+    <SolidColorBrush x:Key="MissingBrush" Color="#B23A2E"/>
+    <SolidColorBrush x:Key="MissingLightBrush" Color="#FBECEA"/>
+    <SolidColorBrush x:Key="OkBrush" Color="#2E7D4F"/>
+    <SolidColorBrush x:Key="OkLightBrush" Color="#E8F4EC"/>
+    <SolidColorBrush x:Key="MutedBrush" Color="#6B7280"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="#D6DCE3"/>
+
+    <Style TargetType="Button">
+        <Setter Property="Padding" Value="10,4"/>
+        <Setter Property="Margin" Value="4,0,0,0"/>
+        <Setter Property="MinWidth" Value="60"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <Style x:Key="SmallButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Padding" Value="8,1"/>
+        <Setter Property="MinWidth" Value="0"/>
+        <Setter Property="FontSize" Value="11"/>
+    </Style>
+
+    <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <Style x:Key="Badge" TargetType="Border">
+        <Setter Property="CornerRadius" Value="9"/>
+        <Setter Property="Padding" Value="7,1"/>
+        <Setter Property="Margin" Value="0,0,8,0"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="MinWidth" Value="58"/>
+    </Style>
+
+    <Style x:Key="ListHeader" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="2,0,0,6"/>
+    </Style>
+
+    <Style x:Key="CardList" TargetType="ListBox">
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
+    </Style>
+
+    <Style TargetType="Hyperlink">
+        <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+        <Setter Property="TextDecorations" Value="{x:Null}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="TextDecorations" Value="Underline"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Round "?" help button -->
+    <Style x:Key="HelpButton" TargetType="Button">
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Margin" Value="6,0,0,0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Content" Value="?"/>
+        <Setter Property="ToolTip" Value="How does this work?"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Circle" CornerRadius="10" Background="{StaticResource AccentLightBrush}"
+                            BorderBrush="{StaticResource AccentBrush}" BorderThickness="1">
+                        <TextBlock Text="?" FontWeight="Bold" FontSize="11.5" Foreground="{StaticResource AccentBrush}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Circle" Property="Background" Value="#CFDDEC"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

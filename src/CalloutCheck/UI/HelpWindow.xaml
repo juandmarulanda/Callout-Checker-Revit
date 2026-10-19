@@ -1,0 +1,30 @@
+<Window x:Class="CalloutCheck.UI.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="460" SizeToContent="Height" MaxHeight="600" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        FontFamily="Segoe UI" FontSize="12.5" Background="White">
+    <Window.Resources>
+        <ResourceDictionary Source="pack://application:,,,/CalloutCheck;component/UI/Styles.xaml"/>
+    </Window.Resources>
+    <DockPanel Margin="16,14">
+        <TextBlock DockPanel.Dock="Top" x:Name="Heading" FontSize="15" FontWeight="SemiBold"
+                   Foreground="{StaticResource AccentBrush}" Margin="0,0,0,10"/>
+        <Button DockPanel.Dock="Bottom" Content="Got it" HorizontalAlignment="Right" IsCancel="True" IsDefault="True"
+                Style="{StaticResource PrimaryButton}" Margin="0,12,0,0" Click="OnClose"/>
+        <ItemsControl x:Name="StepList">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Margin="0,0,0,7">
+                        <Border DockPanel.Dock="Left" Width="22" Height="22" CornerRadius="11" Margin="0,0,10,0"
+                                Background="{StaticResource AccentLightBrush}" VerticalAlignment="Top">
+                            <TextBlock Text="{Binding Number}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" FontSize="11.5"/>
+                        </Border>
+                        <TextBlock Text="{Binding Text}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DockPanel>
+</Window>
